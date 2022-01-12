@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
+    <title>Agenda</title>
+
+    <style>
+        #app {
+            height: 100vh;
+            display: grid;
+        }
+
+        .title {
+            margin-top: 20vh;
+            text-align: center;
+            -ms-text-justify: auto;
+            margin-bottom: 12px;
+        }
+
+        .botaoAdd {
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/vue-the-mask/0.11.1/vue-the-mask.min.js"
+    integrity="sha512-qXurwUG9teY1KFtbBifUHInCiNK/POQqJeFRSoaHg1pHEB1tBUlFKRsfPzm1D6b6ueeQOCKldvXYCtOsPURrcw=="
+    crossorigin="anonymous" referrerpolicy="no-referrer">
+</script>
+
+
+<body>
+    <div id="app">
+        <v-app>
+            <v-container>
+                <h1 class="text-center mb-12 mt-8">{{ title }}</h1>
+                <template>
+                    <v-row justify="center">
+                        <v-dialog v-model="dialog" persistent max-width="600px">
+                            <template v-slot:activator="{ on, attrs }">
+                                <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                                    +
+                                </v-btn>
+                            </template>
+                            <v-card>
+                                <div v-if="
+                                        this.contact.name.length < 3 
+                                        || this.contact.name.length == '' 
+                                        || this.contact.numberPhone.length == '' 
+                                        || this.contact.numberPhone.length < 14">
+                                    <v-alert type="warning" prominent border="left">
+                                        Preencha nome e telefone
+                                    </v-alert>
+                                </div>
+                                <v-card-title>
+                                    <span class="text-h5 d-flex">Adicione seu contato</span>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container>
+                                        <v-row>
+                                            <v-col cols="12">
+                                                <v-text-field label="Insira o nome*" required v-model="contact.name"
+                                                    type="text">
+                                                </v-text-field>
+                                            </v-col>
+                                            <v-col cols="12">
+                                                <v-text-field label="Telefone (xx) xxxx-xxxx*" required type="tel"
+                                                    v-mask="'(##) ####-####', '(##) ####-####'"
+                                                    v-model="contact.numberPhone">
+                                                </v-text-field>
+                                            </v-col>
+                                        </v-row>
+                                    </v-container>
+                                    <small>*Os campos marcados precisam ser preenchidos</small>
+                                </v-card-text>
+                                <v-card-actions>
+                                    <v-spacer></v-spacer>
+                                    <v-btn color="blue darken-1" text @click="dialog = false">
+                                        Cancelar
+                                    </v-btn>
+                                    <v-btn color="purple darken-1" text @click="dialog = false" v-if="editarReally">
+                                        Ok
+                                    </v-btn>
+                                    <v-btn color="blue darken-1" text
+                                        v-if="contact.name.length > 2 && contact.numberPhone.length > 13"
+                                        @click.prevent="saveContact(contact)">
+                                        Salvar
+                                    </v-btn>
+                                </v-card-actions>
+                            </v-card>
+                        </v-dialog>
+                    </v-row>
+                </template>
+            </v-container>
+            <template>
+                <v-simple-table class="mt-4" height="300px" width="100px">
+                    <template v-slot:default>
+                        <thead>
+                            <tr>
+                                <th class="text-left">
+                                    Name
+                                </th>
+                                <th class="text-left">
+                                    Calories
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="contact in contacts" :key="contact">
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.numberPhone }}</td>
+                                <td>
+                                    <v-btn tile color="success">
+                                        <v-icon left>
+                                            mdi-pencil
+                                        </v-icon>
+                                        <a href="#" @click.prevent="editContact(contact)"
+                                            @click="editarReally=!editarReally">Editar</a>
+                                    </v-btn>
+                                </td>
+                                <td>
+                                    <v-btn tile color="red" elevation="2" @click.prevent="removeContact(contact.id)">
+                                        <a href="#">Remover</a>
+                                    </v-btn>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </template>
+                </v-simple-table>
+            </template>
+        </v-app>
+    </div>
+</body>
+
+
+<script type="text/Javascript">
+    new Vue({
+            el: '#app',
+            vuetify: new Vuetify(),
+            data: {
+                title: 'Agenda de contatos :)',
+                dialog: false,
+                contacts: [],
+                contact: {
+                        id: '',
+                        name: '',
+                        numberPhone: ''
+                    },
+                isEdit: false,
+                editarReally: false,
+                phoneNumber: '',
+                quantity: 0,
+                available: false
+            },
+            created() {
+                this.contacts = JSON.parse(localStorage.getItem('contactsApp'))
+            },
+            methods: {
+                saveContact(contact) {
+                    let contacts = localStorage.getItem('contactsApp')
+                    contact.id = new Date().getTime()
+
+                    if(contacts) {
+                        contacts = JSON.parse(contacts)
+                        contacts.push(contact) 
+                    }
+                    else {
+                        contacts = [contact]
+                    }
+
+                    this.contacts = contacts
+                    localStorage.setItem('contactsApp', JSON.stringify(contacts))
+                    location.reload()
+                },
+                editContact(contact) {
+                    this.contact = contact
+                    this.isEdit = true
+                },
+                removeContact(contactId) {
+                        let contacts = localStorage.getItem('contactsApp')
+                        if (!contacts) return;
+
+                        contacts = JSON.parse(contacts)
+
+                        contacts = contacts.filter((contact) => {
+                            return contact.id != contactId
+                        });
+
+                        this.contacts = contacts
+
+                        localStorage.setItem('contactsApp', JSON.stringify(contacts))
+                    },
+            },
+        })
+    </script>
+
+</html>
