@@ -100,7 +100,7 @@
                                         Cancelar
                                     </v-btn>
                                     <v-btn color="green darken-1" text
-                                        @click="att, editarReally=!editarReally, removeContact(contact.id)"
+                                        @click=" editarReally=!editarReally, removeContact(contact.id)"
                                         v-if="editarReally">
                                         Atualizar
                                     </v-btn>
@@ -196,9 +196,6 @@
                 editContact(contact) {
                     this.contact = contact
                     this.isEdit = true
-                },
-                att() {
-                    location.reload()
                 },
                 removeContact(contactId) {
                 
