@@ -42,7 +42,6 @@
     crossorigin="anonymous" referrerpolicy="no-referrer">
 </script>
 
-
 <body>
     <div id="app">
         <v-app>
@@ -52,8 +51,11 @@
                     <v-row justify="center">
                         <v-dialog v-model="dialog" persistent max-width="600px">
                             <template v-slot:activator="{ on, attrs }">
-                                <v-btn color="primary" dark v-bind="attrs" v-on="on">
+                                <v-btn color="primary" dark v-bind="attrs" v-on="on" v-if="!editarReally">
                                     +
+                                </v-btn>
+                                <v-btn color="purple" dark v-bind="attrs" v-on="on" v-if="editarReally">
+                                    Editar
                                 </v-btn>
                             </template>
                             <v-card>
@@ -64,6 +66,11 @@
                                         || this.contact.numberPhone.length < 14">
                                     <v-alert type="warning" prominent border="left">
                                         Preencha nome e telefone
+                                    </v-alert>
+                                </div>
+                                <div v-else>
+                                    <v-alert type="success" prominent border="left">
+                                        Pronto para salvar
                                     </v-alert>
                                 </div>
                                 <v-card-title>
@@ -92,11 +99,11 @@
                                     <v-btn color="blue darken-1" text @click="dialog = false">
                                         Cancelar
                                     </v-btn>
-                                    <v-btn color="purple darken-1" text @click="dialog = false" v-if="editarReally">
-                                        Ok
+                                    <v-btn color="green darken-1" text @click="dialog = false" v-if="editarReally">
+                                        Atualizar
                                     </v-btn>
                                     <v-btn color="blue darken-1" text
-                                        v-if="contact.name.length > 2 && contact.numberPhone.length > 13"
+                                        v-if="contact.name.length > 2 && contact.numberPhone.length > 13 && !editarReally"
                                         @click.prevent="saveContact(contact)">
                                         Salvar
                                     </v-btn>
@@ -112,15 +119,15 @@
                         <thead>
                             <tr>
                                 <th class="text-left">
-                                    Name
+                                    Nome
                                 </th>
                                 <th class="text-left">
-                                    Calories
+                                    Telefone
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="contact in contacts" :key="contact">
+                            <tr v-for="contact in contacts">
                                 <td>{{ contact.name }}</td>
                                 <td>{{ contact.numberPhone }}</td>
                                 <td>
@@ -145,7 +152,6 @@
         </v-app>
     </div>
 </body>
-
 
 <script type="text/Javascript">
     new Vue({
@@ -191,19 +197,20 @@
                     this.isEdit = true
                 },
                 removeContact(contactId) {
-                        let contacts = localStorage.getItem('contactsApp')
-                        if (!contacts) return;
+                
+                    let contacts = localStorage.getItem('contactsApp')
+                    if (!contacts) return;
 
-                        contacts = JSON.parse(contacts)
+                    contacts = JSON.parse(contacts)
 
-                        contacts = contacts.filter((contact) => {
-                            return contact.id != contactId
-                        });
+                    contacts = contacts.filter((contact) => {
+                        return contact.id != contactId
+                    });
 
-                        this.contacts = contacts
+                    this.contacts = contacts
 
-                        localStorage.setItem('contactsApp', JSON.stringify(contacts))
-                    },
+                    localStorage.setItem('contactsApp', JSON.stringify(contacts))
+                },
             },
         })
     </script>
