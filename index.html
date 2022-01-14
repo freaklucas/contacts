@@ -54,7 +54,7 @@
                                 <v-btn color="primary" dark v-bind="attrs" v-on="on" v-if="!editarReally">
                                     +
                                 </v-btn>
-                                <v-btn color="purple" dark v-bind="attrs" v-on="on" v-if="editarReally">
+                                <v-btn color="purple" dark v-bind="attrs" v-on="on" v-show="editarReally">
                                     Editar
                                 </v-btn>
                             </template>
@@ -135,8 +135,8 @@
                                         <v-icon left>
                                             mdi-pencil
                                         </v-icon>
-                                        <a href="#" @click.prevent="editContact(contact)"
-                                            @click="editarReally=!editarReally">Editar</a>
+                                        <a href="#"
+                                            @click.prevent="editContact(contact), editarReally=!editarReally">Editar</a>
                                     </v-btn>
                                 </td>
                                 <td>
