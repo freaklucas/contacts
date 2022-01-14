@@ -54,7 +54,7 @@
                                 <v-btn color="primary" dark v-bind="attrs" v-on="on" v-if="!editarReally">
                                     +
                                 </v-btn>
-                                <v-btn color="purple" dark v-bind="attrs" v-on="on" v-show="editarReally">
+                                <v-btn color="purple" dark v-bind="attrs" v-on="on" v-else>
                                     Editar
                                 </v-btn>
                             </template>
@@ -99,7 +99,9 @@
                                     <v-btn color="blue darken-1" text @click="dialog = false">
                                         Cancelar
                                     </v-btn>
-                                    <v-btn color="green darken-1" text @click="dialog = false" v-if="editarReally">
+                                    <v-btn color="green darken-1" text
+                                        @click="att, editarReally=!editarReally, removeContact(contact.id)"
+                                        v-if="editarReally">
                                         Atualizar
                                     </v-btn>
                                     <v-btn color="blue darken-1" text
@@ -135,8 +137,7 @@
                                         <v-icon left>
                                             mdi-pencil
                                         </v-icon>
-                                        <a href="#"
-                                            @click.prevent="editContact(contact), editarReally=!editarReally">Editar</a>
+                                        <a @click.prevent="editarReally=!editarReally, editContact(contact)">Editar</a>
                                     </v-btn>
                                 </td>
                                 <td>
@@ -196,6 +197,9 @@
                     this.contact = contact
                     this.isEdit = true
                 },
+                att() {
+                    location.reload()
+                },
                 removeContact(contactId) {
                 
                     let contacts = localStorage.getItem('contactsApp')
@@ -211,6 +215,9 @@
 
                     localStorage.setItem('contactsApp', JSON.stringify(contacts))
                 },
+                att() {
+                    push()
+                }
             },
         })
     </script>
