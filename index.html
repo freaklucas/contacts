@@ -131,7 +131,10 @@
                         <tbody>
                             <tr v-for="contact in contacts">
                                 <td>{{ contact.name }}</td>
-                                <td>{{ contact.numberPhone }}</td>
+                                <td v-if="contact.numberPhone[1] && contact.numberPhone[2] == 1" class="blue">
+                                    {{ contact.numberPhone }}</td>
+                                <td v-else>
+                                    {{ contact.numberPhone }}</td>
                                 <td>
                                     <v-btn tile color="success">
                                         <v-icon left>
